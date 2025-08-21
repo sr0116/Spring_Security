@@ -1,0 +1,70 @@
+### 기본 빌드 / IDE ###
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### 운영 환경 / 시크릿 관련 ###
+*.env                 # 환경변수 파일
+*.properties          # 민감한 properties (db.properties 등) - 필요 시 whitelist만
+*.yml                 # application-secret.yml 같은 파일
+*.yaml
+secret.*             # secrets.json, secrets.yml 등
+
+### 로그 / 캐시 ###
+*.log
+*.log.*
+logs/
+*.out
+*.pid
+*.seed
+.cache/
+tmp/
+*.tmp
+*.swp
+
+### OS별 불필요한 파일 ###
+.DS_Store             # macOS Finder 파일
+Thumbs.db             # Windows 썸네일
+ehthumbs.db
+Desktop.ini
+
+### 기타 ###
+node_modules/         # (프론트엔드 병행 시)
+package-lock.json     # (공유 필요 없을 때)
+npm-debug.log*        # npm/yarn log
+yarn-debug.log*
+yarn-error.log*
