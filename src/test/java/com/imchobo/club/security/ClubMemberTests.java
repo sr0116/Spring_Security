@@ -3,14 +3,18 @@ package com.imchobo.club.security;
 import com.imchobo.club.entity.ClubMember;
 import com.imchobo.club.entity.ClubMemberRole;
 import com.imchobo.club.repository.ClubMemberRepository;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
+@Log4j2
 @SpringBootTest
 public class ClubMemberTests {
 
@@ -45,5 +49,27 @@ public class ClubMemberTests {
       }
         repository.save(clubMember);
     });
+  }
+
+  // 쿼리 실행
+  @Test
+  public void testRead () {
+    Optional<ClubMember> result =
+      repository.findByEmail("user96@gmail.com", false);
+    ClubMember clubMember = result.get();
+
+    log.info(clubMember);
+    System.out.println(clubMember);
+  }
+
+  // 쿼리 없이 실행// And (jpa로 사용하는 규정) 없으면 안됨
+  @Test
+  public void testRead2 () {
+    Optional<ClubMember> result =
+      repository.findByEmailAndFromSocial("user96@gmail.com", false);
+    ClubMember clubMember = result.get();
+
+    log.info("clubMember: {}", clubMember);  // ✅ 권장 방식
+    System.out.println(clubMember);
   }
 }
