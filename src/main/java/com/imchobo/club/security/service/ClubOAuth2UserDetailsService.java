@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClubOAuth2UserDetailsService extends DefaultOAuth2UserService {
 
+
   private final ClubMemberRepository repository;
   private final PasswordEncoder passwordEncoder;
 

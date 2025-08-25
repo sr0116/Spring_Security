@@ -48,7 +48,19 @@ public class ClubAuthMemberDTO extends User implements OAuth2User {
 
   @Override
   public Map<String, Object> getAttributes() {
-    return attr;
+    return attr == null ? Map.of() : attr; // 소셜 로그인 정보가 없어서 오류가 나는거라
+  }
+  // 가져온 속성이 틀려서 get으로 따로 가져옴
+  @Override
+  public String getName () {
+    return  attr != null && attr.get("email")  != null ? (String)  attr.get("email") : email;
+  } // getname 을 했을 때 무조건 이메일을 가져옴
+  // 소셜 정보가 디비에 저장 안 되어 있을 때 attr에서 가져오고
+  //디비에 저장 되어있으면 디비에서 가져온 값으로 사용해도 된다
+
+  @Override
+  public String getPassword () {
+    return  password;
   }
 
 }
