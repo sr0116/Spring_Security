@@ -7,12 +7,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 @Log4j2
 public class ApiCheckFilter extends OncePerRequestFilter {
@@ -32,7 +36,7 @@ public class ApiCheckFilter extends OncePerRequestFilter {
     log.info("RequestURI: {}" , request.getRequestURI());
     log.info(antPathMatcher.match( pattern, request.getRequestURI())); // 순서가 중요 앞에가 무조건 Pattern, 뒤에가 실제 경로
     // antPathMatcher 패턴의 uri가 뒤에 것이랑 맞는지
-
+    // 지정한 패턴에 매칭되는 요청만 필터 적용
     if(antPathMatcher.match(pattern, request.getRequestURI())) {
 
       log.info("ApiCheckFilter---------------------");
@@ -80,7 +84,15 @@ public class ApiCheckFilter extends OncePerRequestFilter {
       try { // "Bearer " 7번째부터
         String email = jwtUtil.validateAndExtract(authHeader.substring(7));
         log.info("validate result : {} ", email);
-        checkResult =email.length() > 0;
+//        checkResult =email.length() > 0;
+        checkResult = email != null && !email.isEmpty();
+        if (checkResult) {
+//          사용자 인증 객체 저장(추가)
+          UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(email, null,
+              List.of(new SimpleGrantedAuthority("ROLE_USER")));
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
       }catch (Exception e) {
         e.printStackTrace();
       }

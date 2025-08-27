@@ -1,15 +1,20 @@
 package com.imchobo.club.controller;
 
 import com.imchobo.club.dto.NoteDto;
+import com.imchobo.club.dto.NoteSearchDTO;
+import com.imchobo.club.dto.PageResponseDTO;
 import com.imchobo.club.entity.Note;
 import com.imchobo.club.repository.NoteRepository;
 import com.imchobo.club.service.NoteService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -96,5 +101,30 @@ public class NoteController {
     log.info("num");
     noteService.remove(num);
     return ResponseEntity.ok("removed");
+  }
+
+  // 페이지 처리
+  // 정렬 기준을 자유롭게 하기 위해 Sort 추가
+  @GetMapping("")
+  public PageResponseDTO<NoteDto, Note> listPage(
+    @RequestParam(defaultValue = "1") int page,
+    @RequestParam(defaultValue = "10") int size,
+    @RequestParam(defaultValue = "regDate") String sort,
+    @RequestParam(defaultValue = "desc") String direction
+  ) {
+
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String email = auth.getName();// 이메일 값을 서버에서 저장하고 프론트에서는 그냥 불러올 수 있음
+    log.info("인증된 사용자 이메일: {}", email);
+    Sort sortOption = direction.equalsIgnoreCase("desc")
+      ? Sort.by(sort).descending() : Sort.by(sort).ascending(); // 기본을 최신순으로
+    log.info("List Page={}, size{}", page, size);
+    return noteService.getList(email, page, size,  sortOption);
+  }
+
+  @PostMapping("/search")
+  public ResponseEntity<List<NoteDto>> search(@RequestBody NoteSearchDTO searchDTO) {
+    List<NoteDto> result = noteService.search(searchDTO);
+    return ResponseEntity.ok(result);
   }
 }

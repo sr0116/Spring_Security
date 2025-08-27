@@ -40,7 +40,7 @@ public class SecurityConfig {
         .requestMatchers("/favicon.ico", "/css/**", "/js/**", "/images/**").permitAll() // 정적 리소스 허용
         .requestMatchers("/error").permitAll()
         .requestMatchers("/sample/all").permitAll()
-        .requestMatchers("/notes/**").permitAll()
+//        .requestMatchers("/notes/**").permitAll()
         .requestMatchers("/member/modify", "/member/modify/**").hasRole("USER")
         .requestMatchers("/sample/admin").hasRole("ADMIN")
         .requestMatchers("/sample/member").hasRole("USER")
@@ -74,7 +74,8 @@ public class SecurityConfig {
   @Bean
   public ApiCheckFilter apiCheckFilter() {
     // /note/한 글자로도 있어야 합니다
-    return (new ApiCheckFilter("/notes/**/*", jwtUtil()));
+//    return (new ApiCheckFilter("/notes/**/*", jwtUtil()));
+    return (new ApiCheckFilter("/notes/**", jwtUtil()));
   }
 
 //  @Bean

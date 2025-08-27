@@ -1,8 +1,12 @@
 package com.imchobo.club.service;
 
 import com.imchobo.club.dto.NoteDto;
+import com.imchobo.club.dto.NoteSearchDTO;
+import com.imchobo.club.dto.PageResponseDTO;
 import com.imchobo.club.entity.ClubMember;
 import com.imchobo.club.entity.Note;
+import com.imchobo.club.repository.NoteRepository;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -15,6 +19,12 @@ public interface NoteService {
   void remove(Long num);
 
   List<NoteDto> getAllWithWriter(String writerEmail);
+
+  // 페이지 기반 조회
+  PageResponseDTO<NoteDto, Note> getList(String email, int page, int size, Sort sort);
+
+// 검색 조회
+  List<NoteDto> search(NoteSearchDTO searchDTO);
 
   default  Note dtoToEntity(NoteDto noteDto){
     Note note = Note.builder()
@@ -43,5 +53,15 @@ public interface NoteService {
 
     return noteDTO; // 변환된 DTO 반환
   }
+
+  // enum 기준으로 Note 리스트 가져오기
+  default List<Note> searchByType(NoteRepository repo, NoteSearchDTO dto) {
+    return switch (dto.getType()) {
+      case TITLE -> repo.findByTitleContaining(dto.getKeyword());
+      case CONTENT -> repo.findByContentContaining(dto.getKeyword());
+      case ALL -> repo.findByTitleContainingOrContentContaining(dto.getKeyword(), dto.getKeyword());
+    };
+  }
+
 
 }
