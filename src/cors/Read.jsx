@@ -14,8 +14,9 @@ export default function Read (){
   const nevigate = useNavigate();
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-    axios.get("http://localhost:8080/notes/11", {
+    // const token = sessionStorage.getItem("token"); // 세션이면 세션 로컬이면 로켜\ㅓㄹ로 맞춰줘야 함
+    const token = localStorage.getItem("token");
+    axios.get(`http://localhost:8080/notes/${num}`, {
       headers: {
         'Authorization':`Bearer ${token}`,
       }
@@ -35,6 +36,7 @@ export default function Read (){
       <p>title: {noteDTO.title}</p>
       <p>content: {noteDTO.content}</p>
       <button onClick={() => nevigate(`/modify/${num}`)}>수정</button>
+      <button onClick={() => nevigate(`/`)}>메인</button>
 
     </div>
   );

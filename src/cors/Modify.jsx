@@ -1,17 +1,21 @@
 import {useState, useEffect} from "react";
 import axios from "axios";
+import {useNavigate, useParams} from "react-router-dom";
 
 export default function Modify () {
 
   const [noteDTO, setNoteDTO] = useState({
     num:"", title:"", content:""
   });
+  const { num } = useParams();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     // 기존 데이터 불러오기 (예: 11번 note)
-    axios.get("http://localhost:8080/notes/11", {
+    axios.get(`http://localhost:8080/notes/${num}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
       }
@@ -35,18 +39,26 @@ export default function Modify () {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
+    // const token = sessionStorage.getItem("token");
+
+    console.log("PUT URL:", `http://localhost:8080/notes/${noteDTO.num}`);
+    console.log("DTO:", noteDTO);
+    console.log("TOKEN:", token);
 
     axios.put(`http://localhost:8080/notes/${noteDTO.num}`, noteDTO, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
+
       }
     })
       .then(res => {
         console.log("수정 성공", res.data);
+        navigate("/");
       })
       .catch(err => {
+
         console.log("수정 실패", err);
       });
   };

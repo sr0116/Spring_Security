@@ -6,16 +6,18 @@ import Read from "./cors/Read";
 import List from "./cors/List";
 import Modify from "./cors/Modify";
 import Register from "./cors/Register";
+import Logout from "./cors/Logout";
 
 
 function App() {
   return (
   <div>
     <BrowserRouter>
+      <Logout />
       <Routes>
-        <Route index element={<Login />} />
+        <Route  path="login" element={<Login />} />
         <Route path="read/:num" element={<Read />} />
-        <Route path="list" element={<List />} />
+        <Route index element={<List />} />
         <Route path="modify/:num" element={<Modify />} />
         <Route path="register" element={<Register/>} />
         </Routes>

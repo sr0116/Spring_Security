@@ -1,6 +1,7 @@
 import {useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "./Authcontext";
 
 export default function Login() {
   // id / pw를 하나의 객체로 관리
@@ -8,8 +9,9 @@ export default function Login() {
     email: "",
     pw: ""
   });
-
   const navigate = useNavigate();
+  // 토큰 저장 및 삭제 (토큰이 필요 없으면 지워도 됨)
+  const {token, login, logout } = useAuth();
 
   // input 값 변경 처리
   const handleChange = (e) => {
@@ -20,7 +22,7 @@ export default function Login() {
     }));
   };
 
-  // Content-Type
+  // Content-Type 은
   // text/ html
   // text.plain
   // application/json
@@ -40,8 +42,9 @@ export default function Login() {
       .then(res => {
         alert("로그인 성공")
         console.log("받은 데이터", res.data);
-        sessionStorage.setItem("token", res.data);
-        navigate(`/list`); // 성공 시에
+        login(res.data);
+        // sessionStorage.setItem("token", res.data);
+        navigate(`/`); // 성공 시에
       })
       .catch((err) => {
         console.error("로그인 실패:", err);
@@ -57,9 +60,19 @@ export default function Login() {
         <p>
           <input type="password" name="pw" placeholder="비밀번호" value={loginInfo.pw} onChange={handleChange}/>
         </p>
-        <p>
-          <button type="submit">로그인</button>
-        </p>
+        <div>
+        {/*  <button type="submit">로그인</button>*/}
+        {/* < button type="submit" onClick={() => {*/}
+        {/*logout();*/}
+        {/*  }}> 로그아웃</button>*/}
+          {!token ? (
+          <button type="submit">로그인</button>) :
+            ( <button type="submit" onClick={() => {
+            logout();
+          }}>
+            로그아웃</button>)
+          }
+        </div>
       </form>
     </div>
   );

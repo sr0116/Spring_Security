@@ -5,12 +5,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Cors from "./cors/Cors";
 import Login from "./cors/Login";
+import {AuthProvider} from "./cors/Authcontext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  // AuthProvider 대신에  옆에걸로 교체 <AuthContext.Provider value={{token, login, logout}}>  {children} </AuthContext.Provider>
+  <AuthProvider> {/*토큰 관련  컴포넌트로 감싸주기*/} 
+    
     <App />
-  </React.StrictMode>
+  </AuthProvider>
+
 );
 
 // If you want to start measuring performance in your app, pass a function

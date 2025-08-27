@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import {decode} from "base-64";
+import Login from "./Login";
 
 export function parseJwt(token) {
   try {
@@ -17,9 +18,11 @@ export function parseJwt(token) {
 export default function List() {
   const [list, setList] = useState([]);
   const navigate = useNavigate();
+  // let email = ";"
+  // let token = ";"
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     console.log(token);
     if (!token) {
@@ -27,13 +30,13 @@ export default function List() {
       return;
     }
 
-
     const payloadObj = parseJwt(token);
     console.log(payloadObj);
     if (!payloadObj) {
       navigate("/");
       return;
     }
+
 
     const email = payloadObj.sub;
     console.log(email);
@@ -46,7 +49,31 @@ export default function List() {
         setList(res.data);
       })
       .catch((err) => console.error("err:", err));
-  }, [navigate]);
+  }, []);
+
+  // useEffect(() => {
+  //   token = sessionStorage.getItem("token");
+  //
+  //   if (token) {
+  //     const tokenParts = token.split('.');
+  //     console.log(tokenParts);
+  //
+  //     const payload = tokenParts[1];
+  //     console.log(payload);
+  //
+  //     const decodedPayload = decode(payload);
+  //     const payloadObj = JSON.parse(decodedPayload);
+  //
+  //     email = payloadObj.sub;
+  //
+  //     if (email === "") {
+  //       navigate("/login");
+  //     }
+  //   } else {
+  //     navigate("/login");
+  //   }
+  // }, []);
+
 
   return (
     <div>
@@ -87,6 +114,7 @@ export default function List() {
         </tr>
         </tfoot>
       </table>
+
     </div>
   );
 }

@@ -1,13 +1,15 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {parseJwt} from "./List";
+import {useNavigate} from "react-router-dom";
 
 export default function Register () {
   const [noteDTO, setNoteDTO] = useState({
     title:"", content:"", writerEmail:""
   });
-  const token = sessionStorage.getItem("token");
-
+  // const token = sessionStorage.getItem("token");
+  const token = localStorage.getItem("token");
+const navigator = useNavigate();
 
 
   const handleChange = (e) => {
@@ -51,7 +53,7 @@ export default function Register () {
         <input type="text" onChange={handleChange} name="title" value={noteDTO.title} placeholder="제목"/>
         <input type="text" onChange={handleChange} name="content" value={noteDTO.content} placeholder="내용"/>
         <input type="email" readOnly  name="writerEmail" value={noteDTO.writerEmail} placeholder="작성자 이메일"/>
-        <button type="submit">글 등록</button>
+        <button type="submit" onClick={() => navigator("/")}>글 등록</button>
       </form>
     </div>
   );
