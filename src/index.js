@@ -6,12 +6,12 @@ import reportWebVitals from './reportWebVitals';
 import Cors from "./cors/Cors";
 import Login from "./cors/Login";
 import {AuthProvider} from "./cors/Authcontext";
+import App2 from "./sample/App2";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // AuthProvider 대신에  옆에걸로 교체 <AuthContext.Provider value={{token, login, logout}}>  {children} </AuthContext.Provider>
-  <AuthProvider> {/*토큰 관련  컴포넌트로 감싸주기*/} 
-    
+  <AuthProvider> {/*토큰 관련  컴포넌트로 감싸주기*/}
     <App />
   </AuthProvider>
 

@@ -11,7 +11,6 @@ export default function Register () {
   const token = localStorage.getItem("token");
 const navigate = useNavigate();
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNoteDTO(prev => ({
@@ -20,17 +19,19 @@ const navigate = useNavigate();
     }));
   };
 
-
   useEffect(() => {
     const payloadObj = parseJwt(token);
     const email = payloadObj.sub;
     setNoteDTO(noteDTO => ({
       ...noteDTO, ["writerEmail"]: email // string
     }))
-  }, [navigate]);
+  }, [token]);
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    if (!noteDTO.title || !noteDTO.content) {
+      alert("제목 또는 내용이 없습니다.");
+      return;
+    }
     axios.post("http://localhost:8080/notes/", noteDTO, {
       headers: {
         'Authorization': `Bearer ${token}`,

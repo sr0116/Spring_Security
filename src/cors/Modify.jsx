@@ -50,7 +50,6 @@ export default function Modify () {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
-
       }
     })
       .then(res => {
