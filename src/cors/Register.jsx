@@ -9,7 +9,7 @@ export default function Register () {
   });
   // const token = sessionStorage.getItem("token");
   const token = localStorage.getItem("token");
-const navigator = useNavigate();
+const navigate = useNavigate();
 
 
   const handleChange = (e) => {
@@ -27,7 +27,7 @@ const navigator = useNavigate();
     setNoteDTO(noteDTO => ({
       ...noteDTO, ["writerEmail"]: email // string
     }))
-  }, []);
+  }, [navigate]);
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -40,6 +40,7 @@ const navigator = useNavigate();
       .then(res => {
         console.log("등록 성공", res.data);
         alert(`${res.data.num}번 글 등록 성공!`);
+        navigate("/");
       })
       .catch(err => {
         console.log("등록 실패", err);
@@ -53,7 +54,7 @@ const navigator = useNavigate();
         <input type="text" onChange={handleChange} name="title" value={noteDTO.title} placeholder="제목"/>
         <input type="text" onChange={handleChange} name="content" value={noteDTO.content} placeholder="내용"/>
         <input type="email" readOnly  name="writerEmail" value={noteDTO.writerEmail} placeholder="작성자 이메일"/>
-        <button type="submit" onClick={() => navigator("/")}>글 등록</button>
+        <button type="submit" >글 등록</button>
       </form>
     </div>
   );

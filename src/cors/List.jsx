@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {decode} from "base-64";
 import Login from "./Login";
 
@@ -20,29 +20,24 @@ export default function List() {
   const navigate = useNavigate();
   // let email = ";"
   // let token = ";"
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    console.log(token);
     if (!token) {
       navigate("/");
       return;
     }
-
     const payloadObj = parseJwt(token);
     console.log(payloadObj);
     if (!payloadObj) {
       navigate("/");
       return;
     }
-
-
     const email = payloadObj.sub;
     console.log(email);
     axios
       .get(`http://localhost:8080/notes/all?email=${email}`, {
-        headers: {Authorization: `Bearer ${token}`},
+        headers: {Authorization: `Bearer ${token}`}, // 권한 확인
       })
       .then((res) => {
         console.log(res.data);
@@ -51,29 +46,19 @@ export default function List() {
       .catch((err) => console.error("err:", err));
   }, []);
 
-  // useEffect(() => {
-  //   token = sessionStorage.getItem("token");
-  //
-  //   if (token) {
-  //     const tokenParts = token.split('.');
-  //     console.log(tokenParts);
-  //
-  //     const payload = tokenParts[1];
-  //     console.log(payload);
-  //
-  //     const decodedPayload = decode(payload);
-  //     const payloadObj = JSON.parse(decodedPayload);
-  //
-  //     email = payloadObj.sub;
-  //
-  //     if (email === "") {
-  //       navigate("/login");
-  //     }
-  //   } else {
-  //     navigate("/login");
-  //   }
-  // }, []);
-
+  const handleRemove = (num)=> {
+    axios.delete(`http://localhost:8080/notes/${num}`, {
+      headers: {Authorization: `Bearer ${token}`},
+    })
+      .then(res => {
+        alert("글 삭제")
+        // 삭제 조건
+        setList(prev => prev.filter(item => item.num !== num));
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
 
   return (
     <div>
@@ -96,6 +81,10 @@ export default function List() {
               <td>{dto.num}</td>
               <td>{dto.title}</td>
               <td>{dto.writerEmail}</td>
+              <td><button  onClick={(e) => {
+                e.stopPropagation();
+                handleRemove(dto.num);
+              }}>삭제</button></td>
             </tr>
           ))
         ) : (

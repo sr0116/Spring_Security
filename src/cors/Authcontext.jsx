@@ -19,11 +19,20 @@ const AuthContext = createContext();
 
 export function AuthProvider(props) {
   const {children} = props;
-  const [token, setToken] = useState(null);
-  const login = newToken => {
+  // 로그인 풀림
+  // const [token, setToken] = useState(null);
+  // const login = newToken => {
+  //   setToken(newToken);
+  //   localStorage.setItem('token', newToken);
+  // }
+  //초기값을 localStorage에서 가져오기
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+
+  const login = (newToken) => {
     setToken(newToken);
-    localStorage.setItem('token', newToken);
-  }
+    localStorage.setItem("token", newToken);
+  };
+
 //  로그인 로그아웃 두개 한 번에
   const logout = () => {
     setToken(null);

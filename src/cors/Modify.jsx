@@ -55,11 +55,13 @@ export default function Modify () {
     })
       .then(res => {
         console.log("수정 성공", res.data);
+        alert("수정 성공");
         navigate("/");
       })
       .catch(err => {
 
         console.log("수정 실패", err);
+        alert("수정 실패");
       });
   };
 
@@ -69,6 +71,7 @@ export default function Modify () {
         <input type="text" onChange={handleChange} name="title" value={noteDTO.title} placeholder="제목"/>
         <input type="text" onChange={handleChange} name="content" value={noteDTO.content} placeholder="내용"/>
         <button type="submit">수정 등록</button>
+        <button onClick={() => navigate(`/`)}>메인</button>
       </form>
     </div>
   );
