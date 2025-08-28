@@ -76,7 +76,6 @@ public class NoteController {
     log.info(num);
     return new ResponseEntity<>(noteService.get(num), HttpStatus.OK);
   }
-
   // 특정 회원의 모든 NOTE 확인 하기
   @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE) //@RequestParam("email") 같으면 생략 가능
   public ResponseEntity<List<NoteDto>> getList(@RequestParam("email") String email){
