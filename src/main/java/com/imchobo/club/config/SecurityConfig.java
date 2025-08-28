@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,12 +21,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration
 @EnableWebSecurity
+@Configuration
 @Log4j2
+@EnableMethodSecurity(prePostEnabled = true ) // 반드시 추가
 public class SecurityConfig {
 
-  @Autowired
   private ClubUserDetailsService userDetailsService;
 
   @Bean
@@ -41,9 +42,10 @@ public class SecurityConfig {
         .requestMatchers("/error").permitAll()
         .requestMatchers("/sample/all").permitAll()
 //        .requestMatchers("/notes/**").permitAll()
-        .requestMatchers("/member/modify", "/member/modify/**").hasRole("USER")
-        .requestMatchers("/sample/admin").hasRole("ADMIN")
-        .requestMatchers("/sample/member").hasRole("USER")
+          .requestMatchers("/notes/**").hasRole("USER") // 이걸로 하면 체크필터에서 권한 부여 안 하고 역할 분담할 수 있음
+          .requestMatchers("/member/modify", "/member/modify/**").hasRole("USER")
+          .requestMatchers("/sample/admin").hasRole("ADMIN")
+          .requestMatchers("/sample/member").hasRole("USER")
         .anyRequest().authenticated()
       )
       .formLogin(form -> form

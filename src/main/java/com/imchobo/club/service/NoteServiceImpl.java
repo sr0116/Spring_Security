@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +37,7 @@ public class NoteServiceImpl implements NoteService {
   }
 
   @Override
+  @PostAuthorize("returnObject.writerEmail == authentication.name")
   public NoteDto get(Long num) {
 //    Optional<Note> result = noteRepository.getWithWriter(num);
 //    if (result.isPresent()) {
@@ -87,11 +90,15 @@ public class NoteServiceImpl implements NoteService {
   }
 
   // 검색 조회
-
   @Override
   public List<NoteDto> search(NoteSearchDTO searchDTO) {
+    // 현재 로그인한 사용자 이메일만 가져올 수 있게 강제 적용(내 글 전용으로만 만들어서고 만약 공용으로 만들면 다르게 해야 함)
+    String email = SecurityContextHolder.getContext()
+      .getAuthentication().getName();
+
     return searchByType(noteRepository, searchDTO)
       .stream()
+      .filter(note -> note.getWriter().getEmail().equals(email)) // 내 글전용 조건 필터
       .map(this::entityToDto)
       .toList();
   }

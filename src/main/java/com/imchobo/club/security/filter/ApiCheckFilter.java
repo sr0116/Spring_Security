@@ -1,5 +1,6 @@
 package com.imchobo.club.security.filter;
 
+import com.imchobo.club.security.service.ClubUserDetailsService;
 import com.imchobo.club.security.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,9 +8,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,6 +28,9 @@ public class ApiCheckFilter extends OncePerRequestFilter {
 // 클래스가 하나이면 오토와이어, 여러개면 bean
   private AntPathMatcher antPathMatcher;
   private String pattern;
+
+  @Autowired
+  private ClubUserDetailsService userDetailsService;
 
   public ApiCheckFilter(String pattern, JWTUtil jwtUtil) {
     this.antPathMatcher = new AntPathMatcher();
@@ -65,6 +72,8 @@ public class ApiCheckFilter extends OncePerRequestFilter {
       }
     }
     // 필터가 안 맞을 때
+//    요청 URI가 패턴이 아닐 때
+//그냥 filterChain.doFilter() 해서 다음 필터로 바로 넘김
     filterChain.doFilter(request, response);
   }
   private boolean checkAuthHeader(HttpServletRequest request) {
@@ -85,13 +94,20 @@ public class ApiCheckFilter extends OncePerRequestFilter {
         String email = jwtUtil.validateAndExtract(authHeader.substring(7));
         log.info("validate result : {} ", email);
 //        checkResult =email.length() > 0;
-        checkResult = email != null && !email.isEmpty();
+        checkResult = email != null && !email.isEmpty(); // jwt토큰에 저장된 id정보(이메일 , 유저 네임)를 가지고 인증 및 인가 내용을 시큐리티컨텍스트홀더에 구성하는 부분
         if (checkResult) {
-//          사용자 인증 객체 저장(추가)
-          UsernamePasswordAuthenticationToken authentication =
-            new UsernamePasswordAuthenticationToken(email, null,
-              List.of(new SimpleGrantedAuthority("ROLE_USER")));
-          SecurityContextHolder.getContext().setAuthentication(authentication);
+          // 선생님이 사용하신 것(인증 정보만 배열로 구성되게 되어 있음)
+          UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+          UsernamePasswordAuthenticationToken authToken  = new UsernamePasswordAuthenticationToken(
+            userDetails,
+            null, // 보통은 비밀번호저장 하는데 요즘엔 안함
+            userDetails.getAuthorities());
+          authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//          UsernamePasswordAuthenticationToken authentication =
+//            new UsernamePasswordAuthenticationToken(email, null,
+//              List.of(new SimpleGrantedAuthority("ROLE_USER"))); // 권한 직접 부여
+////          사용자 인증 객체 저장(추가) -> 컨피그에서 수정해서 사용 안 해도 됨
+          SecurityContextHolder.getContext().setAuthentication(authToken);
         }
       }catch (Exception e) {
         e.printStackTrace();
