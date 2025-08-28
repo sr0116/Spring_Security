@@ -47,7 +47,8 @@ public class NoteServiceImpl implements NoteService {
     // 위에거 대신에 이렇게도 사용 가능
 //    Optional 에 값이 있으면 entityToDto(note) 실행해서 NoteDto 로 변환.
     return noteRepository.findById(num) // 넘값을 찾아서
-      .map(this::entityToDto)// 있으면 변환
+      .map(this::entityToDto)// 있으면 변환 (:: 메서드, . 일때는 객체일때)
+//      (noteDTO) -> entityToDTO(noteDTO)
       .orElseThrow(() -> new RuntimeException("Note not found: " + num)); // 없으면 예외처리
   }
 
