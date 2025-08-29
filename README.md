@@ -1,4 +1,4 @@
-# ✔ Spring Security 정리 (구멍가게 코딩단 ver.)
+# ✔ Spring Security 정리 (구멍가게 코딩단 ver.)...
 ## 기본 보안 설정
 
 ### SecurityConfig
